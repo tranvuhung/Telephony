@@ -44,18 +44,34 @@ class SmsController(private val context: Context) {
             sortOrder
         )
 
-        while (cursor != null && cursor.moveToNext()) {
-            val dataObject = HashMap<String, String?>(projection.size)
-            for (columnName in cursor.columnNames) {
-                val columnIndex = cursor.getColumnIndex(columnName)
-                if (columnIndex >= 0) {
-                    val value = cursor.getString(columnIndex)
-                    dataObject[columnName] = value
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                val dataObject = HashMap<String, String?>(projection.size)
+                for (columnName in cursor.columnNames) {
+                    val columnIndex = cursor.getColumnIndex(columnName)
+                    if (columnIndex >= 0) {
+                        val value = cursor.getString(columnIndex)
+                        dataObject[columnName] = value
+                    }
                 }
-            }
-            messages.add(dataObject)
+                messages.add(dataObject)
+            } while (cursor.moveToNext());
         }
-        cursor?.close()
+
+        // while (cursor != null && cursor.moveToNext()) {
+        //     val dataObject = HashMap<String, String?>(projection.size)
+        //     for (columnName in cursor.columnNames) {
+        //         val columnIndex = cursor.getColumnIndex(columnName)
+        //         if (columnIndex >= 0) {
+        //             val value = cursor.getString(columnIndex)
+        //             dataObject[columnName] = value
+        //         }
+        //     }
+        //     messages.add(dataObject)
+        // }
+        if (cursor != null) {
+            cursor.close();
+        }
         return messages
     }
 
